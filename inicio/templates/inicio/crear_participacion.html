@@ -1,12 +1,14 @@
 {% extends "template_base.html" %}
 
 {% block titulo %}Agregar participación{% endblock titulo %}
+
 {% block contenido %}
 <form method="post">
     {% csrf_token %}
 
-    {{ form.nickname.label_tag }} {{ form.nickname }}
-    {{ form.murio.label_tag }} {{ form.murio }}
+    {{ form.nickname.label_tag }} {{ form.nickname }}<br>
+    {{ form.bando.label_tag }} {{ form.bando }}<br>
+    {{ form.murio.label_tag }} {{ form.murio }}<br>
 
     <h3>Kills</h3>
     {{ formset.management_form }}
@@ -21,6 +23,21 @@
         {% endfor %}
     </div>
 
+    <!-- 🔒 Formulario base oculto para clonar -->
+    <div id="empty-form" style="display: none;">
+        <div class="kill-form">
+            {{ formset.empty_form.victima_nickname.label_tag|safe }}
+            {{ formset.empty_form.victima_nickname|safe }}
+
+            {{ formset.empty_form.arma.label_tag|safe }}
+            {{ formset.empty_form.arma|safe }}
+
+            {{ formset.empty_form.distancia.label_tag|safe }}
+            {{ formset.empty_form.distancia|safe }}
+        </div>
+    </div>
+
+    <br>
     <button type="button" id="add-kill-btn">Agregar Kill</button>
     <button type="submit">Guardar Participación</button>
 </form>
@@ -29,24 +46,19 @@
     document.addEventListener('DOMContentLoaded', function () {
         const addKillBtn = document.getElementById('add-kill-btn');
         const killFormsDiv = document.getElementById('kill-forms');
-        const totalForms = document.getElementById('id_kill_set-TOTAL_FORMS');
+        const totalForms = document.getElementById('id_form-TOTAL_FORMS'); // <--- CORREGIDO
+
+        const emptyFormTemplate = document.getElementById('empty-form').innerHTML;
 
         addKillBtn.addEventListener('click', () => {
-            const currentFormCount = parseInt(totalForms.value);
-            const lastForm = document.querySelector('.kill-form:last-of-type');
-            const newForm = lastForm.cloneNode(true);
+            const formIndex = parseInt(totalForms.value);
+            const newFormHtml = emptyFormTemplate.replace(/__prefix__/g, formIndex);
 
-            // Actualizamos los atributos name/id/index
-            newForm.querySelectorAll('input').forEach((input) => {
-                const name = input.name.replace(/-(\d+)-/, `-${currentFormCount}-`);
-                const id = input.id.replace(/-(\d+)-/, `-${currentFormCount}-`);
-                input.name = name;
-                input.id = id;
-                input.value = '';
-            });
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = newFormHtml;
+            killFormsDiv.appendChild(tempDiv.firstElementChild);
 
-            killFormsDiv.appendChild(newForm);
-            totalForms.value = currentFormCount + 1;
+            totalForms.value = formIndex + 1;
         });
     });
 </script>

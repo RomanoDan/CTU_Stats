@@ -6,9 +6,19 @@ from .models import Jugador, Participacion, Kill
 def inicio(request):
     return render(request, 'inicio/inicio.html')
 
+def reglamento(request):
+    return render(request, 'inicio/reglamento.html')
+
+def info_general(request):
+    return render(request, 'inicio/info_general.html')
+
 def lista_jugadores(request):
-    jugadores = Jugador.objects.all().order_by('-kills')  # Puedes ordenar como prefieras
-    return render(request, 'inicio/lista_jugadores.html', {'jugadores': jugadores})
+    jugadores_rusia = Jugador.objects.filter(bando='RUSIA')
+    jugadores_ucrania = Jugador.objects.filter(bando='UCRANIA')
+    return render(request, 'inicio/lista_jugadores.html', {
+    'jugadores_rusia': jugadores_rusia,
+    'jugadores_ucrania': jugadores_ucrania,
+})
 
 def crear_participacion(request):
     if request.method == 'POST':
@@ -17,14 +27,16 @@ def crear_participacion(request):
 
         if form.is_valid() and formset.is_valid():
             nickname = form.cleaned_data['nickname']
-            jugador, _ = Jugador.objects.get_or_create(nickname=nickname)
+            bando = form.cleaned_data['bando']  # Nuevo campo desde el form
+            murio = form.cleaned_data['murio']
 
+            # Crear instancia de Participacion
             participacion = Participacion(
                 nickname=nickname,
-                jugador=jugador,
-                murio=form.cleaned_data['murio']
+                murio=murio
             )
-            participacion.save()
+            participacion.bando = bando  # Asignamos bando temporal
+            participacion.save()  # Aquí ya se crea el jugador con ese bando
 
             cantidad_kills = 0
 
@@ -36,12 +48,19 @@ def crear_participacion(request):
                 arma = kill_form.cleaned_data.get('arma')
                 distancia = kill_form.cleaned_data.get('distancia')
 
-                # Crea la víctima si no existe
-                victima, _ = Jugador.objects.get_or_create(nickname=victima_nickname)
+                if not victima_nickname:
+                    continue
+
+                # Crear o buscar la víctima con el bando contrario
+                bando_contrario = 'RUSIA' if participacion.bando == 'UCRANIA' else 'UCRANIA'
+                victima, _ = Jugador.objects.get_or_create(
+                    nickname=victima_nickname.strip(),
+                    defaults={'bando': bando_contrario}
+                )
 
                 Kill.objects.create(
                     participacion=participacion,
-                    killer=jugador,
+                    killer=participacion.jugador,
                     victima=victima,
                     arma=arma,
                     distancia=distancia
@@ -49,15 +68,9 @@ def crear_participacion(request):
 
                 cantidad_kills += 1
 
-            # Actualizar estadísticas
+            # Guardar la cantidad de kills y actualizar jugador + estadísticas
             participacion.cantidad_kills = cantidad_kills
             participacion.save()
-
-            jugador.participaciones += 1
-            jugador.kills += cantidad_kills
-            if participacion.murio:
-                jugador.muertes += 1
-            jugador.save()
 
             return redirect('lista_jugadores')
     else:

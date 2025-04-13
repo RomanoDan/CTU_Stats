@@ -34,6 +34,16 @@
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
+                            <div class="sb-sidenav-menu-heading">Información</div>
+                            <a class="nav-link" href="{% url "info_general" %}">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                General
+                            </a>
+                            <a class="nav-link" href="{% url "reglamento" %}">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                Reglamento
+                            </a>
+                        <div class="nav">
                             <div class="sb-sidenav-menu-heading">Estadisticas</div>
                             <a class="nav-link" href="{% url "lista_jugadores" %}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
@@ -54,18 +64,15 @@
                             </a>
                         </div>
                     </div>
-                    <div class="sb-sidenav-footer">
-                        <div class="small">Logged in as:</div>
-                        MODIFICAR PARA QUE TOME EL USUARIO LOGUEADO
-                    </div>
+                    
                 </nav>
             </div>
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">{% block titulo %}Titulo genérico{% endblock titulo %}</h1>
+                        <h1 class="mt-4" align="center">{% block titulo %}{% endblock titulo %}</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">{% block contenido %}Contenido genérico{% endblock contenido %}</li>
+                            {% block contenido %}{% endblock contenido %}
                         </ol>
                 </main>
                 <footer class="py-4 bg-light mt-auto">

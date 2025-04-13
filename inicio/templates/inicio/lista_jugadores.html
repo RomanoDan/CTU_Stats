@@ -1,44 +1,111 @@
 {% extends "template_base.html" %}
-{% block titulo %}Listado de jugadores{% endblock titulo %}
+{% load static %}
+{% block titulo %}{% endblock titulo %}
 {% block contenido %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-<table border="1" cellpadding="5" cellspacing="0">
-    <thead>
-        <tr>
-            <th>Nickname</th>
-            <th>Participaciones</th>
-            <th>Kills</th>
-            <th>Muertes</th>
-            <th>Kills por Partida</th>
-            <th>Aliveness (%)</th>
-            <th>KD Ratio</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for jugador in jugadores %}
-            <tr>
-                <td>{{ jugador.nickname }}</td>
-                <td>{{ jugador.participaciones }}</td>
-                <td>{{ jugador.kills }}</td>
-                <td>{{ jugador.muertes }}</td>
-                <td>{{ jugador.killsporpartida|floatformat:2 }}</td>
-                <td>{{ jugador.aliveness|floatformat:2 }}</td>
-                <td>{{ jugador.kdratio|floatformat:2 }}</td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="7">No hay jugadores registrados aún.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-</body>
+
+<style>
+    .tabla-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .tabla-bando {
+        flex: 1;
+        min-width: 300px;
+        text-align: center;
+    }
+
+    .tabla-bando img {
+        max-width: 150px;
+        margin-bottom: 10px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0 auto;
+    }
+
+    th, td {
+        border: 1px solid #000;
+        padding: 5px;
+    }
+
+    th {
+        background-color: #eee;
+    }
+</style>
+
+<div class="tabla-container">
+
+    <!-- Tabla Rusia -->
+    <div class="tabla-bando">
+        <img src="{% static 'img/ru.png' %}" alt="Rusia">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nickname</th>
+                    <th>Participaciones</th>
+                    <th>Kills</th>
+                    <th>Muertes</th>
+                    <th>Kills por Partida</th>
+                    <th>Aliveness (%)</th>
+                    <th>KD Ratio</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for jugador in jugadores_rusia %}
+                    <tr>
+                        <td>{{ jugador.nickname }}</td>
+                        <td>{{ jugador.participaciones }}</td>
+                        <td>{{ jugador.kills }}</td>
+                        <td>{{ jugador.muertes }}</td>
+                        <td>{{ jugador.killsporpartida|floatformat:2 }}</td>
+                        <td>{{ jugador.aliveness|floatformat:2 }}</td>
+                        <td>{{ jugador.kdratio|floatformat:2 }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="7">No hay jugadores de Rusia registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Tabla Ucrania -->
+    <div class="tabla-bando">
+        <img src="{% static 'img/ua.png' %}" alt="Ucrania">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nickname</th>
+                    <th>Participaciones</th>
+                    <th>Kills</th>
+                    <th>Muertes</th>
+                    <th>Kills por Partida</th>
+                    <th>Aliveness (%)</th>
+                    <th>KD Ratio</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for jugador in jugadores_ucrania %}
+                    <tr>
+                        <td>{{ jugador.nickname }}</td>
+                        <td>{{ jugador.participaciones }}</td>
+                        <td>{{ jugador.kills }}</td>
+                        <td>{{ jugador.muertes }}</td>
+                        <td>{{ jugador.killsporpartida|floatformat:2 }}</td>
+                        <td>{{ jugador.aliveness|floatformat:2 }}</td>
+                        <td>{{ jugador.kdratio|floatformat:2 }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="7">No hay jugadores de Ucrania registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
 {% endblock contenido %}
-</html>
