@@ -1,3 +1,7 @@
+{% extends "template_base.html" %}
+
+{% block titulo %}Agregar participación{% endblock titulo %}
+{% block contenido %}
 <form method="post">
     {% csrf_token %}
 
@@ -46,3 +50,4 @@
         });
     });
 </script>
+{% endblock contenido %}

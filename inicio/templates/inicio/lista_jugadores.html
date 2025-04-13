@@ -1,3 +1,6 @@
+{% extends "template_base.html" %}
+{% block titulo %}Listado de jugadores{% endblock titulo %}
+{% block contenido %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +9,6 @@
     <title>Document</title>
 </head>
 <body>
-    <h2>Listado de Jugadores</h2>
 <table border="1" cellpadding="5" cellspacing="0">
     <thead>
         <tr>
@@ -38,4 +40,5 @@
     </tbody>
 </table>
 </body>
+{% endblock contenido %}
 </html>
