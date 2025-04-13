@@ -1,0 +1,48 @@
+<form method="post">
+    {% csrf_token %}
+
+    {{ form.nickname.label_tag }} {{ form.nickname }}
+    {{ form.murio.label_tag }} {{ form.murio }}
+
+    <h3>Kills</h3>
+    {{ formset.management_form }}
+
+    <div id="kill-forms">
+        {% for kill_form in formset %}
+            <div class="kill-form">
+                {{ kill_form.victima_nickname.label_tag }} {{ kill_form.victima_nickname }}
+                {{ kill_form.arma.label_tag }} {{ kill_form.arma }}
+                {{ kill_form.distancia.label_tag }} {{ kill_form.distancia }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <button type="button" id="add-kill-btn">Agregar Kill</button>
+    <button type="submit">Guardar Participación</button>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addKillBtn = document.getElementById('add-kill-btn');
+        const killFormsDiv = document.getElementById('kill-forms');
+        const totalForms = document.getElementById('id_kill_set-TOTAL_FORMS');
+
+        addKillBtn.addEventListener('click', () => {
+            const currentFormCount = parseInt(totalForms.value);
+            const lastForm = document.querySelector('.kill-form:last-of-type');
+            const newForm = lastForm.cloneNode(true);
+
+            // Actualizamos los atributos name/id/index
+            newForm.querySelectorAll('input').forEach((input) => {
+                const name = input.name.replace(/-(\d+)-/, `-${currentFormCount}-`);
+                const id = input.id.replace(/-(\d+)-/, `-${currentFormCount}-`);
+                input.name = name;
+                input.id = id;
+                input.value = '';
+            });
+
+            killFormsDiv.appendChild(newForm);
+            totalForms.value = currentFormCount + 1;
+        });
+    });
+</script>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Listado de Jugadores</h2>
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Nickname</th>
+            <th>Participaciones</th>
+            <th>Kills</th>
+            <th>Muertes</th>
+            <th>Kills por Partida</th>
+            <th>Aliveness (%)</th>
+            <th>KD Ratio</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for jugador in jugadores %}
+            <tr>
+                <td>{{ jugador.nickname }}</td>
+                <td>{{ jugador.participaciones }}</td>
+                <td>{{ jugador.kills }}</td>
+                <td>{{ jugador.muertes }}</td>
+                <td>{{ jugador.killsporpartida|floatformat:2 }}</td>
+                <td>{{ jugador.aliveness|floatformat:2 }}</td>
+                <td>{{ jugador.kdratio|floatformat:2 }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="7">No hay jugadores registrados aún.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>
