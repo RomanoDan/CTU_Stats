@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required, user_passes_test
 from .forms import ParticipacionForm, KillFormSet
 from .models import Jugador, Participacion, Kill
 
@@ -20,6 +21,11 @@ def lista_jugadores(request):
     'jugadores_ucrania': jugadores_ucrania,
 })
 
+def es_admin(user):
+    return user.is_staff or user.is_superuser
+
+@login_required(login_url='login')  # Redirige al login si no está logueado
+@user_passes_test(es_admin, login_url='default_401')  # Redirige si no es admin
 def crear_participacion(request):
     if request.method == 'POST':
         form = ParticipacionForm(request.POST)

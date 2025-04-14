@@ -1,0 +1,9 @@
+{% extends 'template_base.html' %}
+{% block titulo %} <h2>Iniciar Sesión</h2>{% endblock titulo %}
+{% block contenido %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Ingresar</button>
+  </form>
+{% endblock %}

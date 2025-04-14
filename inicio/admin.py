@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import Jugador, Participacion,Kill
 
-# Register your models here.
+
+admin.site.register(Jugador)
+admin.site.register(Participacion)
+admin.site.register(Kill)
