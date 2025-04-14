@@ -1,0 +1,1 @@
+web: gunicorn CTU_STATS.wsgi:application
