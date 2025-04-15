@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db.models import Avg, Max, Count
 from .forms import ParticipacionForm, KillFormSet
 from .models import Jugador, Participacion, Kill
 
@@ -20,6 +21,72 @@ def lista_jugadores(request):
     'jugadores_rusia': jugadores_rusia,
     'jugadores_ucrania': jugadores_ucrania,
 })
+
+def detalle_jugador(request, jugador_id):
+    jugador = get_object_or_404(Jugador, id=jugador_id)
+
+    # Estadísticas generales
+    participaciones = jugador.participaciones_detalle.count()
+    kills = jugador.kills
+    muertes = jugador.muertes
+    kdratio = jugador.kdratio
+    aliveness = jugador.aliveness
+    kills_por_partida = kills / participaciones if participaciones > 0 else 0
+
+    # Estadísticas por arma
+    kills_qs = Kill.objects.filter(killer=jugador)
+    kills_por_arma = kills_qs.values('arma').annotate(
+        promedio_distancia=Avg('distancia'),
+        max_distancia=Max('distancia'),
+        cantidad=Count('id')
+    )
+
+    # ==== Victimas ====
+    victimas_qs = kills_qs.values('victima').annotate(cantidad=Count('id')).order_by('-cantidad')
+    ids_victimas = [item['victima'] for item in victimas_qs]
+    jugadores_victimas = Jugador.objects.in_bulk(ids_victimas)
+
+    victimas = [
+        {
+            'jugador': jugadores_victimas.get(item['victima']),
+            'cantidad': item['cantidad']
+        }
+        for item in victimas_qs
+        if jugadores_victimas.get(item['victima']) is not None
+    ]
+
+    # ==== Asesinos ====
+    asesinos_qs = Kill.objects.filter(victima=jugador).values('killer').annotate(cantidad=Count('id')).order_by('-cantidad')
+    ids_asesinos = [item['killer'] for item in asesinos_qs]
+    jugadores_asesinos = Jugador.objects.in_bulk(ids_asesinos)
+
+    asesinos = [
+        {
+            'jugador': jugadores_asesinos.get(item['killer']),
+            'cantidad': item['cantidad']
+        }
+        for item in asesinos_qs
+        if jugadores_asesinos.get(item['killer']) is not None
+    ]
+
+    contexto = {
+        'jugador': jugador,
+        'participaciones': participaciones,
+        'kills': kills,
+        'muertes': muertes,
+        'kdratio': kdratio,
+        'aliveness': aliveness,
+        'kills_por_partida': kills_por_partida,
+        'kills_por_arma': kills_por_arma,
+        'victimas': victimas,
+        'asesinos': asesinos,
+    }
+    
+    return render(request, 'inicio/detalle_jugador.html', contexto)
+
+
+
+
 
 def es_admin(user):
     return user.is_staff or user.is_superuser

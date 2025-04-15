@@ -1,0 +1,133 @@
+{% extends "template_base.html" %}
+{% block titulo %}
+<h2>Detalle del jugador: {{ jugador.nickname }}</h2>
+{% endblock titulo %}
+{% block contenido %}
+
+<style>
+    .detalle-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 40px;
+        width: 100%;
+        max-width: 1000px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .tabla-detalle {
+        width: 50%;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .tabla-detalle table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+    }
+
+    .tabla-detalle th, .tabla-detalle td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: center;
+    }
+
+    .tabla-detalle th {
+        background-color: #eee;
+    }
+
+    /* Si no querés que nunca se apilen */
+    @media (max-width: 768px) {
+        .detalle-container {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+        .tabla-detalle {
+            min-width: 400px;
+        }
+    }
+</style>
+
+
+<div class="detalle-container">
+    <!-- Estadísticas generales -->
+    <div class="tabla-detalle">
+        <table>
+            <tr><th colspan="2">Estadísticas Generales</th></tr>
+            <tr><td>Participaciones</td><td>{{ participaciones }}</td></tr>
+            <tr><td>Kills</td><td>{{ kills }}</td></tr>
+            <tr><td>Muertes</td><td>{{ muertes }}</td></tr>
+            <tr><td>Kills por partida</td><td>{{ kills_por_partida|floatformat:2 }}</td></tr>
+            <tr><td>Aliveness</td><td>{{ aliveness|floatformat:2 }}</td></tr>
+            <tr><td>KD Ratio</td><td>{{ kdratio|floatformat:2 }}</td></tr>
+        </table>
+    </div>
+
+    <!-- Estadísticas por arma -->
+    <div class="tabla-detalle">
+        <table>
+            <tr><th colspan="4">Kills por Arma</th></tr>
+            <tr>
+                <th>Arma</th>
+                <th>Promedio Distancia</th>
+                <th>Distancia Máxima</th>
+                <th>Cantidad de Kills</th>
+            </tr>
+            {% for item in kills_por_arma %}
+            <tr>
+                <td>{{ item.arma }}</td>
+                <td>{{ item.promedio_distancia|floatformat:2 }} m</td>
+                <td>{{ item.max_distancia|floatformat:2 }} m</td>
+                <td>{{ item.cantidad }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">Sin kills registradas.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+<div class="detalle-container">
+    <!-- Victimas -->
+    <div class="tabla-detalle" style="margin: 0 auto; margin-top: 40px; width: 80%;">
+        <table>
+            <tr><th colspan="2">Jugadores asesinados por {{ jugador.nickname }}</th></tr>
+            <tr>
+                <th>Jugador</th>
+                <th>Cantidad de veces</th>
+            </tr>
+            {% for victima in victimas %}
+            <tr>
+                <td><a href="{% url 'detalle_jugador' victima.jugador.id %}">{{ victima.jugador.nickname }}</a></td>
+                <td>{{ victima.cantidad }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="2">Este jugador no ha matado a nadie aún.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- Asesinos -->
+    <div class="tabla-detalle" style="margin: 0 auto; margin-top: 40px; width: 80%;">
+        <table>
+            <tr><th colspan="2">Jugadores que asesinaron a {{ jugador.nickname }}</th></tr>
+            <tr>
+                <th>Jugador</th>
+                <th>Cantidad de veces</th>
+            </tr>
+            {% for asesino in asesinos %}
+            <tr>
+                <td><a href="{% url 'detalle_jugador' asesino.jugador.id %}">{{ asesino.jugador.nickname }}</a></td>
+                <td>{{ asesino.cantidad }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="2">Nadie ha matado a este jugador aún.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}
