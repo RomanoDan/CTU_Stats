@@ -60,6 +60,7 @@
             <tr><td>Participaciones</td><td>{{ participaciones }}</td></tr>
             <tr><td>Kills</td><td>{{ kills }}</td></tr>
             <tr><td>Muertes</td><td>{{ muertes }}</td></tr>
+            <tr><td>Teamkills</td><td>{{ teamkills }}</td></tr>
             <tr><td>Disparos</td><td>{{ disparos }}</td></tr>
             <tr><td>Disparos acertados</td><td>{{ hits }}</td></tr>
             <tr><td>Precisión</td><td>{{ precision|floatformat:2 }} %</td></tr>
@@ -93,7 +94,7 @@
     </div>
 </div>
 <div class="detalle-container">
-    <!-- Victimas -->
+    <!-- Victimas (incluyendo teamkills) -->
     <div class="tabla-detalle" style="margin: 0 auto; margin-top: 40px; width: 80%;">
         <table>
             <tr><th colspan="2">Jugadores asesinados por {{ jugador.nickname }}</th></tr>
@@ -103,7 +104,14 @@
             </tr>
             {% for victima in victimas %}
             <tr>
-                <td><a href="{% url 'detalle_jugador' victima.jugador.id %}">{{ victima.jugador.nickname }}</a></td>
+                <td>
+                    <a href="{% url 'detalle_jugador' victima.jugador.id %}">
+                        {{ victima.jugador.nickname }}
+                    </a>
+                    {% if victima.teamkill %}
+                    <span style="color: red;">(TK)</span>
+                    {% endif %}
+                </td>
                 <td>{{ victima.cantidad }}</td>
             </tr>
             {% empty %}
@@ -111,6 +119,7 @@
             {% endfor %}
         </table>
     </div>
+
 
     <!-- Asesinos -->
     <div class="tabla-detalle" style="margin: 0 auto; margin-top: 40px; width: 80%;">

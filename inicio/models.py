@@ -10,6 +10,7 @@ class Jugador(models.Model):
     bando = models.CharField(max_length=10, choices=BANDO_CHOICES, default='RUSIA')
     participaciones = models.PositiveIntegerField(default=0)
     kills = models.PositiveIntegerField(default=0)
+    teamkills = models.PositiveIntegerField(default=0)
     muertes = models.PositiveIntegerField(default=0)
     disparos = models.PositiveIntegerField(default=0)
     hits = models.PositiveIntegerField(default=0)
@@ -49,6 +50,7 @@ class Participacion(models.Model):
     cantidad_kills = models.PositiveIntegerField(default=0)
     cantidad_disparos = models.PositiveIntegerField(default=0)
     cantidad_hits = models.PositiveIntegerField(default=0)
+    cantidad_teamkills = models.PositiveIntegerField(default=0)
 
     bando = None  
 
@@ -70,6 +72,7 @@ class Participacion(models.Model):
         jugador_obj.muertes = participaciones.filter(murio=True).count()
         jugador_obj.disparos = sum(p.cantidad_disparos for p in participaciones)
         jugador_obj.hits = sum(p.cantidad_hits for p in participaciones)
+        jugador_obj.teamkills = sum(p.cantidad_teamkills for p in participaciones)
         jugador_obj.save()
 
         # (Opcional) Verificación de víctimas sin bando o no asignadas
@@ -100,3 +103,10 @@ class Kill(models.Model):
     def __str__(self):
         return f"{self.killer.nickname} mató a {self.victima.nickname} con {self.arma} (distancia: {self.distancia})"
 
+class Teamkill(models.Model):
+    participacion = models.ForeignKey('Participacion', on_delete=models.CASCADE, related_name='teamkills')
+    killer = models.ForeignKey(Jugador, on_delete=models.CASCADE, related_name='teamkills_realizadas')
+    victima = models.ForeignKey(Jugador, on_delete=models.CASCADE, related_name='teamkills_recibidas')
+
+    def __str__(self):
+        return f"{self.killer.nickname} teamkilled {self.victima.nickname}"

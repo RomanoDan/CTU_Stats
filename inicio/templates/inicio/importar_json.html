@@ -1,0 +1,11 @@
+{% extends "template_base.html" %}
+
+{% block titulo %}Importar JSON{% endblock %}
+
+{% block contenido %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="archivo_json" accept=".json" required>
+    <button type="submit">Importar</button>
+</form>
+{% endblock %}
