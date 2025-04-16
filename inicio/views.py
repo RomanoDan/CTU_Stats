@@ -197,7 +197,7 @@ def crear_participacion(request):
 
 
 def es_admin(user):
-    return user.is_staff or user.is_superuser
+    return user.is_staff
 
 @login_required(login_url='login')  # Redirige al login si no está logueado
 @user_passes_test(es_admin, login_url='default_401')  # Redirige si no es admin

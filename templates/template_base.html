@@ -46,7 +46,7 @@
                                 Agregar participación
                             </a>
                             [Carga manual deshabilitada]-->
-                            {% if request.user.is_superuser %}
+                            {% if request.user.is_staff %}
                             <a class="nav-link" href="{% url "importar_json" %}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Importar partida
