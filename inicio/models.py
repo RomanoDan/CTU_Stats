@@ -11,6 +11,8 @@ class Jugador(models.Model):
     participaciones = models.PositiveIntegerField(default=0)
     kills = models.PositiveIntegerField(default=0)
     muertes = models.PositiveIntegerField(default=0)
+    disparos = models.PositiveIntegerField(default=0)
+    hits = models.PositiveIntegerField(default=0)
 
     @property
     def killsporpartida(self):
@@ -29,6 +31,12 @@ class Jugador(models.Model):
         if self.muertes == 0:
             return self.kills
         return self.kills / self.muertes
+    
+    @property
+    def precision(self):
+        if self.disparos == self.hits:
+            return 100
+        return (self.hits*100)/self.disparos
 
     def __str__(self):
         return self.nickname
@@ -39,6 +47,8 @@ class Participacion(models.Model):
     jugador = models.ForeignKey(Jugador, on_delete=models.CASCADE, related_name='participaciones_detalle', null=True, blank=True)
     murio = models.BooleanField(default=False)
     cantidad_kills = models.PositiveIntegerField(default=0)
+    cantidad_disparos = models.PositiveIntegerField(default=0)
+    cantidad_hits = models.PositiveIntegerField(default=0)
 
     bando = None  
 
@@ -52,12 +62,14 @@ class Participacion(models.Model):
 
         # Guardar la participación primero
         super().save(*args, **kwargs)
-
+        
         # Recalcular estadísticas del jugador
         participaciones = self.jugador.participaciones_detalle.all()
         jugador_obj.participaciones = participaciones.count()
         jugador_obj.kills = sum(p.cantidad_kills for p in participaciones)
         jugador_obj.muertes = participaciones.filter(murio=True).count()
+        jugador_obj.disparos = sum(p.cantidad_disparos for p in participaciones)
+        jugador_obj.hits = sum(p.cantidad_hits for p in participaciones)
         jugador_obj.save()
 
         # (Opcional) Verificación de víctimas sin bando o no asignadas

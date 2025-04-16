@@ -8,7 +8,7 @@ class ParticipacionForm(forms.ModelForm):
 
     class Meta:
         model = Participacion
-        fields = ['murio']  # 'nickname' está por fuera
+        fields = ['murio','cantidad_disparos','cantidad_hits']  # 'nickname' está por fuera
 
 class KillForm(forms.Form):
     victima_nickname = forms.CharField(label="Victima (Nickname)", max_length=50)

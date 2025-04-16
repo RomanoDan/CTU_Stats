@@ -32,6 +32,9 @@ def detalle_jugador(request, jugador_id):
     kdratio = jugador.kdratio
     aliveness = jugador.aliveness
     kills_por_partida = kills / participaciones if participaciones > 0 else 0
+    disparos = jugador.disparos
+    hits = jugador.hits
+    precision = jugador.precision
 
     # Estadísticas por arma
     kills_qs = Kill.objects.filter(killer=jugador)
@@ -80,6 +83,9 @@ def detalle_jugador(request, jugador_id):
         'kills_por_arma': kills_por_arma,
         'victimas': victimas,
         'asesinos': asesinos,
+        'disparos': disparos,
+        'hits': hits,
+        'precision': precision,
     }
     
     return render(request, 'inicio/detalle_jugador.html', contexto)
@@ -102,11 +108,15 @@ def crear_participacion(request):
             nickname = form.cleaned_data['nickname']
             bando = form.cleaned_data['bando']  # Nuevo campo desde el form
             murio = form.cleaned_data['murio']
+            cantidad_disparos = form.cleaned_data['cantidad_disparos']
+            cantidad_hits = form.cleaned_data['cantidad_hits']
 
             # Crear instancia de Participacion
             participacion = Participacion(
                 nickname=nickname,
-                murio=murio
+                murio=murio,
+                cantidad_disparos=cantidad_disparos,
+                cantidad_hits=cantidad_hits
             )
             participacion.bando = bando  # Asignamos bando temporal
             participacion.save()  # Aquí ya se crea el jugador con ese bando
