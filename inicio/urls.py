@@ -1,6 +1,6 @@
 
 from django.urls import path
-from inicio.views import inicio, crear_participacion, lista_jugadores,reglamento,info_general,detalle_jugador,importar_participacion_json
+from inicio.views import inicio, crear_participacion, lista_jugadores,reglamento,info_general,detalle_jugador,importar_participacion_json,detalle_partida
 
 urlpatterns = [
     path('', inicio, name='inicio'),
@@ -10,4 +10,6 @@ urlpatterns = [
     path('info-campana/', info_general, name='info_general'),
     path('jugador/<int:jugador_id>/', detalle_jugador, name='detalle_jugador'),
     path('importar-json/', importar_participacion_json, name='importar_json'),
+    path('partida/<int:partida_id>/', detalle_partida, name='detalle_partida'),
+
 ]

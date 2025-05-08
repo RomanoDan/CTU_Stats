@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.db.models import Avg, Max, Count
 from .forms import ParticipacionForm, KillFormSet
-from .models import Jugador, Participacion, Kill, Teamkill
+from .models import Jugador, Participacion, Kill, Teamkill, Partida
 import json
 
 def inicio(request):
@@ -203,15 +203,42 @@ def es_admin(user):
 @user_passes_test(es_admin, login_url='default_401')  # Redirige si no es admin
 def importar_participacion_json(request):
     if request.method == 'POST' and request.FILES.get('archivo_json'):
+        # Obtener datos del formulario
+        nombre_partida = request.POST.get('nombre_partida', 'Partida sin nombre')
+        comandante_rusia_nickname = request.POST.get('comandante_rusia', None)
+        comandante_ucrania_nickname = request.POST.get('comandante_ucrania', None)
+        bando_ganador = request.POST.get('bando_ganador', None)
+
+        # Procesar archivo JSON
         archivo = request.FILES['archivo_json']
         data = json.load(archivo)
 
-        players_data = {p['playerUID']: p for p in data['players']}
+        # Buscar o crear los comandantes
+        comandante_rusia = None
+        if comandante_rusia_nickname:
+            comandante_rusia, _ = Jugador.objects.get_or_create(
+                nickname=comandante_rusia_nickname.strip(),
+                defaults={'bando': 'RUSIA'}
+            )
 
+        comandante_ucrania = None
+        if comandante_ucrania_nickname:
+            comandante_ucrania, _ = Jugador.objects.get_or_create(
+                nickname=comandante_ucrania_nickname.strip(),
+                defaults={'bando': 'UCRANIA'}
+            )
+
+        # Crear la partida
+        partida = Partida.objects.create(
+            nombre=nombre_partida,
+            comandante_rusia=comandante_rusia,
+            comandante_ucrania=comandante_ucrania,
+            ganador=bando_ganador
+        )
+
+        # Crear participaciones
         participaciones_dict = {}
-
-        # Crear participaciones base
-        for player in data['players']:
+        for player in data.get('players', []):
             nickname = player['name'].strip()
             bando = 'RUSIA' if player['side'] == 'EAST' else 'UCRANIA'
             disparos = player.get('shots', 0)
@@ -224,21 +251,20 @@ def importar_participacion_json(request):
 
             participacion = Participacion.objects.create(
                 nickname=nickname,
-                murio=False,  # Por defecto, se actualiza después con las kills
+                jugador=jugador,
+                murio=False,  # Se actualizará después si el jugador murió
                 cantidad_disparos=disparos,
                 cantidad_hits=hits,
+                partida=partida,  # Relacionar con la partida creada
             )
-            participacion.bando = bando
-            participacion.save()
-
             participaciones_dict[player['playerUID']] = participacion
 
         # Procesar kills
         for kill in data.get('kills', []):
             killer_uid = kill.get('killer')
             victim_uid = kill.get('victim')
-            arma = kill.get('weapon')
-            distancia = kill.get('distance', 0)
+            arma = kill.get('weapon', 'Desconocida')
+            distancia = float(kill.get('distance', 0))
 
             killer_part = participaciones_dict.get(killer_uid)
             victim_part = participaciones_dict.get(victim_uid)
@@ -249,18 +275,18 @@ def importar_participacion_json(request):
             killer = killer_part.jugador
             victima = victim_part.jugador
 
-            # Validamos teamkill
+            # Validar si es un teamkill
             if killer.bando == victima.bando:
                 Teamkill.objects.create(
-                    killer=killer,
-                    victima=victima,
                     participacion=killer_part,
+                    killer=killer,
+                    victima=victima
                 )
                 killer_part.cantidad_teamkills += 1
                 killer_part.save()
-                continue  # No creamos la Kill si fue una teamkill
+                continue  # No registrar como kill normal
 
-            # Crear la kill
+            # Registrar la kill
             Kill.objects.create(
                 participacion=killer_part,
                 killer=killer,
@@ -269,7 +295,7 @@ def importar_participacion_json(request):
                 distancia=distancia
             )
 
-            # Aumentamos la cantidad de kills en la participación
+            # Actualizar estadísticas
             killer_part.cantidad_kills += 1
             killer_part.save()
 
@@ -277,8 +303,43 @@ def importar_participacion_json(request):
             victim_part.murio = True
             victim_part.save()
 
-
-        messages.success(request, 'Participaciones importadas correctamente.')
+        messages.success(request, 'Partida y participaciones importadas correctamente.')
         return redirect('lista_jugadores')
 
     return render(request, 'inicio/importar_json.html')
+
+
+def detalle_partida(request, partida_id):
+    partida = get_object_or_404(Partida, id=partida_id)
+    participaciones = partida.participaciones.all()
+
+    # Separar participaciones por bando
+    participaciones_rusia = participaciones.filter(jugador__bando='RUSIA')
+    participaciones_ucrania = participaciones.filter(jugador__bando='UCRANIA')
+
+    # Calcular MVP
+    mvp_candidates = participaciones.order_by('-cantidad_kills')
+    if mvp_candidates.exists():
+        max_kills = mvp_candidates.first().cantidad_kills
+        mvp_candidates = mvp_candidates.filter(cantidad_kills=max_kills)
+
+        # Restar teamkills en caso de empate
+        min_teamkills = min(p.cantidad_teamkills for p in mvp_candidates)
+        mvp_candidates = [p for p in mvp_candidates if p.cantidad_teamkills == min_teamkills]
+
+        # Filtrar por jugadores vivos si sigue el empate
+        if len(mvp_candidates) > 1:
+            vivos = [p for p in mvp_candidates if not p.murio]
+            if vivos:
+                mvp_candidates = vivos
+
+    # Si sigue el empate, dejar a todos los empatados como MVP
+    mvps = mvp_candidates
+
+    contexto = {
+        'partida': partida,
+        'participaciones_rusia': participaciones_rusia,
+        'participaciones_ucrania': participaciones_ucrania,
+        'mvps': mvps,
+    }
+    return render(request, 'inicio/detalle_partida.html', contexto)

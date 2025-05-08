@@ -1,0 +1,133 @@
+{% extends "template_base.html" %}
+
+{% block contenido %}
+
+<style>
+    .detalle-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 40px;
+        width: 100%;
+        max-width: 1000px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .tabla-detalle {
+        width: 50%;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .tabla-detalle table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+    }
+
+    .tabla-detalle th, .tabla-detalle td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: center;
+    }
+
+    .tabla-detalle th {
+        background-color: #eee;
+    }
+
+    @media (max-width: 768px) {
+        .detalle-container {
+            flex-wrap: wrap;
+        }
+        .tabla-detalle {
+            width: 100%;
+        }
+    }
+</style>
+
+<!-- Detalles de la partida -->
+<div class="tabla-detalle" style="margin: 0 auto; margin-top: 40px; width: 80%;">
+    <table>
+        <tr><th colspan="2">Detalles de la Partida</th></tr>
+        <tr><td>Nombre</td><td>{{ partida.nombre }}</td></tr>
+        <tr><td>Fecha</td><td>{{ partida.fecha|date:"d/m/Y H:i" }}</td></tr>
+        <tr><td>Comandante Rusia</td><td>{{ partida.comandante_rusia }}</td></tr>
+        <tr><td>Comandante Ucrania</td><td>{{ partida.comandante_ucrania }}</td></tr>
+        <tr><td>Ganador</td><td>{{ partida.ganador }}</td></tr>
+        <tr>
+            <td>MVP</td>
+            <td>
+                {% if mvps %}
+                    {% for mvp in mvps %}
+                        <a href="{% url 'detalle_jugador' mvp.jugador.id %}">
+                            {{ mvp.jugador.nickname }}
+                        </a>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                {% else %}
+                    No definido
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+</div>
+
+<!-- Participaciones separadas por bando -->
+<div class="detalle-container">
+    <!-- Participaciones Rusia -->
+    <div class="tabla-detalle">
+        <table>
+            <tr><th colspan="4">Rusos</th></tr>
+            <tr>
+                <th>Jugador</th>
+                <th>Kills</th>
+                <th>Muerto</th>
+                <th>Teamkills</th>
+            </tr>
+            {% for participacion in participaciones_rusia %}
+            <tr>
+                <td>
+                    <a href="{% url 'detalle_jugador' participacion.jugador.id %}">
+                        {{ participacion.jugador.nickname }}
+                    </a>
+                </td>
+                <td>{{ participacion.cantidad_kills }}</td>
+                <td>{{ participacion.murio|yesno:"Sí,No" }}</td>
+                <td>{{ participacion.cantidad_teamkills }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">No hay participaciones registradas para Rusia.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- Participaciones Ucrania -->
+    <div class="tabla-detalle">
+        <table>
+            <tr><th colspan="4">Ucranianos</th></tr>
+            <tr>
+                <th>Jugador</th>
+                <th>Kills</th>
+                <th>Muerto</th>
+                <th>Teamkills</th>
+            </tr>
+            {% for participacion in participaciones_ucrania %}
+            <tr>
+                <td>
+                    <a href="{% url 'detalle_jugador' participacion.jugador.id %}">
+                        {{ participacion.jugador.nickname }}
+                    </a>
+                </td>
+                <td>{{ participacion.cantidad_kills }}</td>
+                <td>{{ participacion.murio|yesno:"Sí,No" }}</td>
+                <td>{{ participacion.cantidad_teamkills }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">No hay participaciones registradas para Ucrania.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}

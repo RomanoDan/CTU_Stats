@@ -5,6 +5,21 @@
 {% block contenido %}
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
+    <label for="nombre_partida">Nombre de la partida:</label>
+    <input type="text" id="nombre_partida" name="nombre_partida" required>
+
+    <label for="comandante_rusia">Comandante Rusia:</label>
+    <input type="text" id="comandante_rusia" name="comandante_rusia">
+
+    <label for="comandante_ucrania">Comandante Ucrania:</label>
+    <input type="text" id="comandante_ucrania" name="comandante_ucrania">
+
+    <label for="bando_ganador">Bando ganador:</label>
+    <select id="bando_ganador" name="bando_ganador">
+        <option value="">Sin definir</option>
+        <option value="RUSIA">Rusia</option>
+        <option value="UCRANIA">Ucrania</option>
+    </select>
     <input type="file" name="archivo_json" accept=".json" required>
     <button type="submit">Importar</button>
 </form>

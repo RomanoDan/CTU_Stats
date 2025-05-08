@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Sum, F, FloatField
+from django.utils.timezone import now
 
 class Jugador(models.Model):
     BANDO_CHOICES = [
@@ -42,7 +43,20 @@ class Jugador(models.Model):
     def __str__(self):
         return self.nickname
 
-    
+class Partida(models.Model):
+    nombre = models.CharField(max_length=100)
+    fecha = models.DateTimeField(default=now)
+    comandante_rusia = models.ForeignKey(
+        Jugador, on_delete=models.SET_NULL, null=True, blank=True, related_name='partidas_comandante_rusia'
+    )
+    comandante_ucrania = models.ForeignKey(
+        Jugador, on_delete=models.SET_NULL, null=True, blank=True, related_name='partidas_comandante_ucrania'
+    )
+    ganador = models.CharField(max_length=10, choices=Jugador.BANDO_CHOICES, null=True, blank=True)
+
+    def __str__(self):
+        return f"Partida: {self.nombre} - Ganador: {self.ganador if self.ganador else 'Sin definir'}"
+
 class Participacion(models.Model):
     nickname = models.CharField(max_length=50) 
     jugador = models.ForeignKey(Jugador, on_delete=models.CASCADE, related_name='participaciones_detalle', null=True, blank=True)
@@ -51,6 +65,7 @@ class Participacion(models.Model):
     cantidad_disparos = models.PositiveIntegerField(default=0)
     cantidad_hits = models.PositiveIntegerField(default=0)
     cantidad_teamkills = models.PositiveIntegerField(default=0)
+    partida = models.ForeignKey(Partida, on_delete=models.CASCADE, related_name='participaciones', null=True, blank=True)
 
     bando = None  
 
