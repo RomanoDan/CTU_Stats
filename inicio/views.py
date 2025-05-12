@@ -17,12 +17,15 @@ def info_general(request):
     return render(request, 'inicio/info_general.html')
 
 def lista_jugadores(request):
-    jugadores_rusia = Jugador.objects.filter(bando='RUSIA')
-    jugadores_ucrania = Jugador.objects.filter(bando='UCRANIA')
+    jugadores_rusia = Jugador.objects.filter(bando='RUSIA', comodin=False)
+    jugadores_ucrania = Jugador.objects.filter(bando='UCRANIA', comodin=False)
+    jugadores_comodines = Jugador.objects.filter(comodin=True) 
+
     return render(request, 'inicio/lista_jugadores.html', {
-    'jugadores_rusia': jugadores_rusia,
-    'jugadores_ucrania': jugadores_ucrania,
-})
+        'jugadores_rusia': jugadores_rusia,
+        'jugadores_ucrania': jugadores_ucrania,
+        'jugadores_comodines': jugadores_comodines,  
+    })
 
 def detalle_jugador(request, jugador_id):
     jugador = get_object_or_404(Jugador, id=jugador_id)
@@ -86,19 +89,44 @@ def detalle_jugador(request, jugador_id):
     # Ordenamos por cantidad descendente
     victimas.sort(key=lambda x: x['cantidad'], reverse=True)
 
-    # ==== Asesinos ====
+    # ==== Asesinos (kills normales) ====
     asesinos_qs = Kill.objects.filter(victima=jugador).values('killer').annotate(cantidad=Count('id')).order_by('-cantidad')
     ids_asesinos = [item['killer'] for item in asesinos_qs]
-    jugadores_asesinos = Jugador.objects.in_bulk(ids_asesinos)
 
+    # ==== Teamkills recibidas ====
+    teamkills_recibidas_qs = Teamkill.objects.filter(victima=jugador).values('killer').annotate(cantidad=Count('id'))
+    ids_teamkills_recibidas = [item['killer'] for item in teamkills_recibidas_qs]
+
+    # Unificamos ids
+    ids_asesinos_totales = set(ids_asesinos + ids_teamkills_recibidas)
+    jugadores_asesinos_totales = Jugador.objects.in_bulk(ids_asesinos_totales)
+
+    # Creamos un diccionario con sumatoria de kills y teamkills recibidas
+    asesinos_dict = {}
+
+    for item in asesinos_qs:
+        asesinos_dict[item['killer']] = {'cantidad': item['cantidad'], 'teamkill': False}
+
+    for item in teamkills_recibidas_qs:
+        if item['killer'] in asesinos_dict:
+            asesinos_dict[item['killer']]['cantidad'] += item['cantidad']
+            asesinos_dict[item['killer']]['teamkill'] = True
+        else:
+            asesinos_dict[item['killer']] = {'cantidad': item['cantidad'], 'teamkill': True}
+
+    # Convertimos a lista ordenada
     asesinos = [
         {
-            'jugador': jugadores_asesinos.get(item['killer']),
-            'cantidad': item['cantidad']
+            'jugador': jugadores_asesinos_totales.get(killer_id),
+            'cantidad': data['cantidad'],
+            'teamkill': data['teamkill']
         }
-        for item in asesinos_qs
-        if jugadores_asesinos.get(item['killer']) is not None
+        for killer_id, data in asesinos_dict.items()
+        if jugadores_asesinos_totales.get(killer_id) is not None
     ]
+
+    # Ordenamos por cantidad descendente
+    asesinos.sort(key=lambda x: x['cantidad'], reverse=True)
 
     contexto = {
         'jugador': jugador,
@@ -284,8 +312,9 @@ def importar_participacion_json(request):
                 )
                 killer_part.cantidad_teamkills += 1
                 killer_part.save()
-                continue  # No registrar como kill normal
-
+                victim_part.murio = True
+                victim_part.save()
+                continue 
             # Registrar la kill
             Kill.objects.create(
                 participacion=killer_part,
@@ -313,9 +342,10 @@ def detalle_partida(request, partida_id):
     partida = get_object_or_404(Partida, id=partida_id)
     participaciones = partida.participaciones.all()
 
-    # Separar participaciones por bando
-    participaciones_rusia = participaciones.filter(jugador__bando='RUSIA')
-    participaciones_ucrania = participaciones.filter(jugador__bando='UCRANIA')
+    # Separar participaciones por bando, excluyendo comodines
+    participaciones_rusia = participaciones.filter(jugador__bando='RUSIA', jugador__comodin=False)
+    participaciones_ucrania = participaciones.filter(jugador__bando='UCRANIA', jugador__comodin=False)
+    participaciones_comodines = participaciones.filter(jugador__comodin=True)
 
     # Calcular MVP
     mvp_candidates = participaciones.order_by('-cantidad_kills')
@@ -340,6 +370,7 @@ def detalle_partida(request, partida_id):
         'partida': partida,
         'participaciones_rusia': participaciones_rusia,
         'participaciones_ucrania': participaciones_ucrania,
+        'participaciones_comodines': participaciones_comodines,
         'mvps': mvps,
     }
     return render(request, 'inicio/detalle_partida.html', contexto)

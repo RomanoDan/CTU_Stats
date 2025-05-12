@@ -9,12 +9,15 @@ class Jugador(models.Model):
     ]
     nickname = models.CharField(max_length=50, unique=True)
     bando = models.CharField(max_length=10, choices=BANDO_CHOICES, default='RUSIA')
+    comodin = models.BooleanField(default=False)  # Nuevo campo para identificar comodines
     participaciones = models.PositiveIntegerField(default=0)
     kills = models.PositiveIntegerField(default=0)
     teamkills = models.PositiveIntegerField(default=0)
     muertes = models.PositiveIntegerField(default=0)
     disparos = models.PositiveIntegerField(default=0)
     hits = models.PositiveIntegerField(default=0)
+
+    # Propiedades y métodos existentes...
 
     @property
     def killsporpartida(self):

@@ -1,71 +1,23 @@
 {% extends 'template_base.html' %}
 
 {% block contenido %}
-<div class="container mt-5">
-  <h1 class="mb-4">REGLAS</h1>
-
-  <h2 class="mt-4">Partida</h2>
-  <ol>
-      <li>Las partidas durarán 45 minutos, independientemente de la distancia entre zonas.</li>
-      <li>Se jugarán dos partidas por cada fecha, donde cada equipo tendrá la oportunidad de atacar y defender las zonas elegidas.</li>
-      <li>El objetivo final del evento, para ambos bandos, es capturar el HQ del enemigo, siendo este el último punto marcado en mapa (extremos norte y sur, respectivamente).</li>
-      <li>Cada comandante elegirá la zona de ataque de su equipo con al menos dos días de anticipación, con los detalles de vehículos y equipamiento a utilizar. En la primer fecha se elegirá por sorteo qué comandante elige primero, y se invertirá en la fecha siguiente. Una zona atacada no puede ser utilizada para lanzar otro ataque en la misma fecha.</li>
-      <li>Sólo se podrán atacar zonas del frente, es decir, aquellas conectadas directamente con un sector aliado. Si una zona enemiga tiene dos o más líneas de contacto, el comandante deberá especificar cuál línea usará para atacar.</li>
-      <li>El defensor no podrá usar vehículos no asignados a la zona. Sí podrá comprar equipamiento para el sector.</li>
-      <li>Si un equipo pierde el centro logístico (anteúltimo punto antes del HQ), no podrá mover vehículos ni hacer nuevas compras.</li>
-      <li>El horario de misión comenzará a las 12 am y se sumarán +4 horas por cada partida.</li>
-      <li>Si el evento finaliza por tiempo, ganará el equipo con más zonas bajo control, según su tier (tier 1 = 1 punto, tier 2 = 2 puntos, etc).</li>
-      <li>Empate: si ambos equipos capturan el HQ enemigo en la última fecha, se jugará una partida de desempate en igualdad de condiciones.</li>
-      <li>Asistencia: quienes no participen en al menos el 75% de las partidas serán considerados comodines y no podrán recibir premios ni reconocimientos.</li>
-      <li>Comodines que participen en el 90% o más serán considerados miembros activos (excepto reclutas).</li>
-      <li>No se permite el Lobo Solitario. Los jugadores deben moverse en binomios hasta el primer contacto.</li>
-      <ul>
-          <li>13.a: Lobo Solitario es estar a más de 100m del aliado más cercano. Se penaliza con pérdida de kills y "aliveness".</li>
-          <li>13.b: Se exceptúa si la dirección y destino del equipo es el mismo o si el jugador es piloto aéreo.</li>
-          <li>13.c: El primer contacto es fuego cruzado entre equipos en la misma zona, no incluye solo ver enemigos o disparos lejanos.</li>
-      </ul>
-  </ol>
-
-  <h2 class="mt-4">Zonas</h2>
-  <ol>
-      <li>El defensor no puede salir de su área de influencia (círculo en el mapa). Nadie puede salir del área entre los dos círculos. Aéreos pueden salir para maniobrar, pero no atacar fuera del círculo atacante.</li>
-      <li>La zona de captura será un área específica dentro del círculo defensor, marcada en el mapa.</li>
-      <li>La captura será por superioridad del atacante y durará 2 minutos.</li>
-      <li>Regla del último hombre: si quedan más de 5 minutos y un solo atacante vivo, el tiempo se reduce a 5 minutos. Excepción si el jugador intenta rescatar un vehículo.</li>
-      <ul>
-          <li>4.a: Si el atacante entra a la zona, se agregan 5 minutos (máximo 45).</li>
-          <li>4.b: La defensa necesita al menos 2 jugadores para evitar la captura.</li>
-      </ul>
-  </ol>
-
-  <h2 class="mt-4">Equipamiento</h2>
-  <ol>
-      <li>Ambos bandos pueden comprar cajas de equipamiento (AT, MG, GL, etc) según hoja de logística.</li>
-      <li>El equipamiento usado en una partida no podrá usarse en la siguiente.</li>
-      <li>Se puede capturar equipamiento enemigo en la misma partida, pero no para futuras.</li>
-      <li>Se pueden comprar hasta 6 cajas de armamento y 3 utilitarias por partida, según hoja de logística.</li>
-  </ol>
-
-  <h2 class="mt-4">Vehículos</h2>
-  <ol>
-      <li>Se deben comprar hasta 2 días antes de la partida. Los vehículos se entregan en el CL y deben moverse según capacidad.</li>
-      <li>Cada vehículo tiene un valor logístico y cada zona una cantidad de puntos máximos según su tier.</li>
-      <li>Hay límite de vehículos por facción. Si se supera por captura, se puede mover o vender al 75% de su valor.</li>
-      <li>Un vehículo puede ser capturado si:</li>
-      <ul>
-          <li>4.a: El defensor gana y el vehículo queda en su zona.</li>
-          <li>4.b: El atacante gana y el vehículo no es destruido.</li>
-          <li>4.c: El defensor gana y el vehículo queda en zona neutral (se destruye).</li>
-          <li>4.d: El defensor gana y el vehículo está en zona atacante (ataque lo conserva).</li>
-      </ul>
-      <li>Los vehículos del atacante no pueden acercarse a la zona de captura antes de los últimos 5 minutos.</li>
-      <li>No pueden usarse para bloquear accesos o defender desde dentro de la zona.</li>
-      <li>Vehículos completamente destruidos no podrán usarse en futuras partidas.</li>
-      <li>Venta:</li>
-      <ul>
-          <li>8.a: Vehículos propios se venden al 50%.</li>
-          <li>8.b: Vehículos capturados al 75%.</li>
-      </ul>
-  </ol>
+<style>
+.responsive-iframe-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+.responsive-iframe-container iframe {
+    width: 100vw;
+    min-width: 100%;
+    height: 80vh; /* O ajusta el alto a tu preferencia */
+    border: 0;
+    display: block;
+}
+</style>
+<div class="responsive-iframe-container">
+    <iframe 
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSInYP8D7Ul0UOOAnOwsSoFszW9Vq8ljKAHodhnKz3gTcDXzkH5-StvXsv9QSlFq6h9jyZgzJVt9btq/pubhtml?gid=0&single=true">
+    </iframe>
 </div>
 {% endblock %}

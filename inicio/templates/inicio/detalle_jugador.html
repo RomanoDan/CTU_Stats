@@ -131,9 +131,14 @@
             </tr>
             {% for asesino in asesinos %}
             <tr>
-                <td><a href="{% url 'detalle_jugador' asesino.jugador.id %}">{{ asesino.jugador.nickname }}</a></td>
-                <td>{{ asesino.cantidad }}</td>
-            </tr>
+    <td>
+        <a href="{% url 'detalle_jugador' asesino.jugador.id %}">{{ asesino.jugador.nickname }}</a>
+        {% if asesino.teamkill %}
+        <span style="color: red;">(TK)</span>
+        {% endif %}
+    </td>
+    <td>{{ asesino.cantidad }}</td>
+</tr>
             {% empty %}
             <tr><td colspan="2">Nadie ha matado a este jugador aún.</td></tr>
             {% endfor %}

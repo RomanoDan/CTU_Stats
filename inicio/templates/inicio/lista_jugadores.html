@@ -66,7 +66,6 @@
     }
 </style>
 
-
 <div class="tabla-container">
 
     <!-- Tabla Rusia -->
@@ -84,15 +83,15 @@
             </thead>
             <tbody>
                 {% for jugador in jugadores_rusia %}
-                    <tr>
-                        <td><a href="{% url 'detalle_jugador' jugador.id %}">{{ jugador.nickname }}</a></td>
-                        <td>{{ jugador.participaciones }}</td>
-                        <td>{{ jugador.kills }}</td>
-                        <td>{{ jugador.muertes }}</td>
-                        <td>{{ jugador.kdratio|floatformat:2 }}</td>
-                    </tr>
+                <tr>
+                    <td><a href="{% url 'detalle_jugador' jugador.id %}">{{ jugador.nickname }}</a></td>
+                    <td>{{ jugador.participaciones }}</td>
+                    <td>{{ jugador.kills }}</td>
+                    <td>{{ jugador.muertes }}</td>
+                    <td>{{ jugador.kdratio|floatformat:2 }}</td>
+                </tr>
                 {% empty %}
-                    <tr><td colspan="7">No hay jugadores de Rusia registrados.</td></tr>
+                <tr><td colspan="5">No hay jugadores de Rusia registrados.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
@@ -113,20 +112,47 @@
             </thead>
             <tbody>
                 {% for jugador in jugadores_ucrania %}
-                    <tr>
-                        <td><a href="{% url 'detalle_jugador' jugador.id %}">{{ jugador.nickname }}</a></td>
-                        <td>{{ jugador.participaciones }}</td>
-                        <td>{{ jugador.kills }}</td>
-                        <td>{{ jugador.muertes }}</td>
-                        <td>{{ jugador.kdratio|floatformat:2 }}</td>
-                    </tr>
+                <tr>
+                    <td><a href="{% url 'detalle_jugador' jugador.id %}">{{ jugador.nickname }}</a></td>
+                    <td>{{ jugador.participaciones }}</td>
+                    <td>{{ jugador.kills }}</td>
+                    <td>{{ jugador.muertes }}</td>
+                    <td>{{ jugador.kdratio|floatformat:2 }}</td>
+                </tr>
                 {% empty %}
-                    <tr><td colspan="7">No hay jugadores de Ucrania registrados.</td></tr>
+                <tr><td colspan="5">No hay jugadores de Ucrania registrados.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 
-</div>
+    <!-- Tabla Comodines -->
+    <div class="tabla-bando">
+        <h3>Comodines</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nickname</th>
+                    <th>Participaciones</th>
+                    <th>Kills</th>
+                    <th>Muertes</th>
+                    <th>KD Ratio</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for jugador in jugadores_comodines %}
+                <tr>
+                    <td><a href="{% url 'detalle_jugador' jugador.id %}">{{ jugador.nickname }}</a></td>
+                    <td>{{ jugador.participaciones }}</td>
+                    <td>{{ jugador.kills }}</td>
+                    <td>{{ jugador.muertes }}</td>
+                    <td>{{ jugador.kdratio|floatformat:2 }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5">No hay jugadores comodines registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-{% endblock contenido %}
+</div>{% endblock contenido %}

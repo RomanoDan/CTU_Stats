@@ -1,42 +1,23 @@
 {% extends 'template_base.html' %}
 
 {% block contenido %}
-<div class="container mt-5">
-  <h1 class="mb-4">INFORMACIÓN GENERAL</h1>
-
-  <h2 class="mt-4">DESCRIPCIÓN</h2>
-  <p>
-    Estados Unidos se ha retirado de la zona, dejando abandonadas sus bases y equipamiento mientras sus fuerzas se repliegan en dirección a Kabul. Las fuerzas del Taliban han capturado gran parte del equipamiento a medida que avanzan pero el ejército Afgano ha logrado frenar el avance y establecer una línea de contacto entre las provincias de Badghis y Bala Murghad.
-  </p>
-
-  <h2 class="mt-4">MISIÓN</h2>
-  <p>
-    Ambos bandos deben avanzar tomando las zonas del enemigo hasta alcanzar el HQ del bando opuesto. Las zonas están divididas en 4 tiers, donde las tres primeras zonas de cada bando, que representan el frente del conflicto son el Tier 1, las tres zonas de cada bando que funcionan como retaguardía de las primeras son el Tier 2. La zona central de cada bando que se utiliza como centro logístico es el Tier 3 y el HQ de cada bando es el Tier 4. La diferencia entre los distintos tiers está en la cantidad de dinero que generan en cada fecha y los puntos de logística disponibles para la partida. Para mejor identificación de los tiers, ver mapa.
-  </p>
-
-  <h2 class="mt-4">ZONAS</h2>
-  <ul>
-    <li><strong>Zonas de Tier 1:</strong> Generan $1000 por fecha cada zona y tienen disponibles 8 puntos logísticos.</li>
-    <li><strong>Zonas de Tier 2:</strong> Generan $2000 por fecha cada zona y tienen disponibles 10 puntos logísticos.</li>
-    <li><strong>Zonas de Tier 3:</strong> Generan $4000 por fecha cada zona y tienen disponibles 12 puntos logísticos.</li>
-    <li><strong>Zonas de Tier 4:</strong> Generan $5000 por fecha cada zona y tienen disponibles 15 puntos logísticos.</li>
-  </ul>
-
-  <h2 class="mt-4">DESARROLLO DEL EVENTO</h2>
-  <p>
-    Los días de juego serán los miércoles de cada semana a las 22hs, salvo que se indique lo contrario. El equipo que elegirá la primer zona a atacar será designado por sorteo y se invertirá en la fecha siguiente.
-  </p>
-  <p>
-    El equipo defensor en la primer partida no podrá utilizar la zona atacada para lanzar un ataque, y tampoco podrá atacar la zona que el equipo atacante utilizó para lanzar el suyo, deberá elegir una zona sin conflicto.
-  </p>
-  <p>
-    Una vez que las zonas de ataque y defensa en ambas partidas de la fecha hayan sido elegidas, los comandantes podrán adquirir y movilizar vehículos y equipamiento para utilizar en la partida desde las zonas aledañas según los puntos de movimiento del vehículo y los logísticos de la zona.
-  </p>
-  <p>
-    Cada equipo iniciará el evento con $100.000 disponibles para la compra inicial y la posibilidad de movilizar las unidades compradas hasta el día lunes 02-09-2024, para iniciar el evento el día 04-09-2024 en la primer fecha. Las semanas siguientes se mantendrá el mismo esquema.
-  </p>
-  <p>
-    Cada partida avanzará la hora del día en 4 horas, empezando a las 12:00:00hs en la primer partida.
-  </p>
+<style>
+.responsive-iframe-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+.responsive-iframe-container iframe {
+    width: 100vw;
+    min-width: 100%;
+    height: 80vh; /* O ajusta el alto a tu preferencia */
+    border: 0;
+    display: block;
+}
+</style>
+<div class="responsive-iframe-container">
+    <iframe 
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSInYP8D7Ul0UOOAnOwsSoFszW9Vq8ljKAHodhnKz3gTcDXzkH5-StvXsv9QSlFq6h9jyZgzJVt9btq/pubhtml?gid=2066159647&single=true">
+    </iframe>
 </div>
 {% endblock %}
