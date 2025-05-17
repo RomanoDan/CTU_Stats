@@ -1,0 +1,33 @@
+{% extends "template_base.html" %}
+{% load static %}
+{% block titulo %}{% endblock titulo %}
+{% block contenido %}
+
+
+<div class="tabla-container">
+    <table id="tabla-general">
+        <thead>
+            <tr>
+                <th>Nickname</th>
+                <th>Participaciones</th>
+                <th>Kills</th>
+                <th>Muertes</th>
+                <th>KD Ratio</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in jugadores %}
+            <tr>
+                <td><a href="{% url 'detalle_jugador_general' item.jugador.id %}">{{ item.jugador.nickname }}</a></td>
+                <td>{{ item.participaciones }}</td>
+                <td>{{ item.kills }}</td>
+                <td>{{ item.muertes }}</td>
+                <td>{{ item.kdratio|floatformat:2 }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No hay jugadores registrados en partidas tipo GENERAL.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock contenido %}

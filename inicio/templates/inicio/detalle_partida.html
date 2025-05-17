@@ -53,9 +53,18 @@
         <tr><th colspan="2">Detalles de la Partida</th></tr>
         <tr><td>Nombre</td><td>{{ partida.nombre }}</td></tr>
         <tr><td>Fecha</td><td>{{ partida.fecha|date:"d/m/Y H:i" }}</td></tr>
-        <tr><td>Comandante Rusia</td><td>{{ partida.comandante_rusia }}</td></tr>
-        <tr><td>Comandante Ucrania</td><td>{{ partida.comandante_ucrania }}</td></tr>
-        <tr><td>Ganador</td><td>{{ partida.ganador }}</td></tr>
+        <tr><td>Comandante Rusia</td><td>{{ partida.comandante_west }}</td></tr>
+        <tr><td>Comandante Ucrania</td><td>{{ partida.comandante_east }}</td></tr>
+        <tr><td>Ganador</td><td>
+            {% if partida.ganador == "WEST" %}
+        <span style="color: red;">Rusia</span>
+        {% elif partida.ganador == "EAST" %}
+        <span style="color: blue;">Ucrania</span>
+        {% elif partida.ganador == "IND" %}
+        <span style="color: gray;">Independiente</span>
+        {% else %}
+        No definido
+        {% endif %}
         <tr>
             <td>MVP</td>
             <td>
@@ -85,7 +94,7 @@
                 <th>Muerto</th>
                 <th>Teamkills</th>
             </tr>
-            {% for participacion in participaciones_rusia %}
+            {% for participacion in participaciones_east %}
             <tr>
                 <td>
                     <a href="{% url 'detalle_jugador' participacion.jugador.id %}">
@@ -112,7 +121,7 @@
                 <th>Muerto</th>
                 <th>Teamkills</th>
             </tr>
-            {% for participacion in participaciones_ucrania %}
+            {% for participacion in participaciones_west %}
             <tr>
                 <td>
                     <a href="{% url 'detalle_jugador' participacion.jugador.id %}">

@@ -4,155 +4,56 @@
 {% block contenido %}
 
 <style>
-    .tabla-container {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 40px;
-        width: 100%;
-        max-width: 1200px;
-        margin: auto;
-        padding: 20px;
-    }
-
-    .tabla-bando {
-        flex: 1 1 48%;
-        text-align: center;
-        background-color: #f9f9f9;
-        border-radius: 10px;
-        padding: 15px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    .tabla-bando img {
-        max-width: 120px;
-        margin-bottom: 15px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 0 auto;
-        font-size: 0.95rem;
-    }
-
-    th, td {
-        border: 1px solid #ccc;
-        padding: 8px;
-    }
-
-    th {
-        background-color: #eee;
-    }
-
-    a {
-        color: #007BFF;
-        text-decoration: none;
-    }
-
-    a:hover {
-        text-decoration: underline;
-    }
-
-    @media (max-width: 768px) {
-        .tabla-container {
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .tabla-bando {
-            flex: 1 1 100%;
-        }
+    .bando-icon {
+        width: 32px;
+        height: 32px;
+        vertical-align: middle;
     }
 </style>
 
 <div class="tabla-container">
-
-    <!-- Tabla Rusia -->
-    <div class="tabla-bando">
-        <img src="{% static 'img/ru.png' %}" alt="Rusia">
-        <table>
-            <thead>
-                <tr>
-                    <th>Nickname</th>
-                    <th>Participaciones</th>
-                    <th>Kills</th>
-                    <th>Muertes</th>
-                    <th>KD Ratio</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for jugador in jugadores_rusia %}
-                <tr>
-                    <td><a href="{% url 'detalle_jugador' jugador.id %}">{{ jugador.nickname }}</a></td>
-                    <td>{{ jugador.participaciones }}</td>
-                    <td>{{ jugador.kills }}</td>
-                    <td>{{ jugador.muertes }}</td>
-                    <td>{{ jugador.kdratio|floatformat:2 }}</td>
-                </tr>
-                {% empty %}
-                <tr><td colspan="5">No hay jugadores de Rusia registrados.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Tabla Ucrania -->
-    <div class="tabla-bando">
-        <img src="{% static 'img/ua.png' %}" alt="Ucrania">
-        <table>
-            <thead>
-                <tr>
-                    <th>Nickname</th>
-                    <th>Participaciones</th>
-                    <th>Kills</th>
-                    <th>Muertes</th>
-                    <th>KD Ratio</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for jugador in jugadores_ucrania %}
-                <tr>
-                    <td><a href="{% url 'detalle_jugador' jugador.id %}">{{ jugador.nickname }}</a></td>
-                    <td>{{ jugador.participaciones }}</td>
-                    <td>{{ jugador.kills }}</td>
-                    <td>{{ jugador.muertes }}</td>
-                    <td>{{ jugador.kdratio|floatformat:2 }}</td>
-                </tr>
-                {% empty %}
-                <tr><td colspan="5">No hay jugadores de Ucrania registrados.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Tabla Comodines -->
-    <div class="tabla-bando">
-        <h3>Comodines</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nickname</th>
-                    <th>Participaciones</th>
-                    <th>Kills</th>
-                    <th>Muertes</th>
-                    <th>KD Ratio</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for jugador in jugadores_comodines %}
-                <tr>
-                    <td><a href="{% url 'detalle_jugador' jugador.id %}">{{ jugador.nickname }}</a></td>
-                    <td>{{ jugador.participaciones }}</td>
-                    <td>{{ jugador.kills }}</td>
-                    <td>{{ jugador.muertes }}</td>
-                    <td>{{ jugador.kdratio|floatformat:2 }}</td>
-                </tr>
-                {% empty %}
-                <tr><td colspan="5">No hay jugadores comodines registrados.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-</div>{% endblock contenido %}
+    <table id="tabla-general">
+        <thead>
+            <tr>
+                <th>Bando</th>
+                <th>Nickname</th>
+                <th>Participaciones</th>
+                <th>Kills</th>
+                <th>Muertes</th>
+                <th>KD Ratio</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in jugadores %}
+            <tr>
+                <td{% if item.comodin %}
+        data-order="Comodines"
+    {% elif item.bando == "WEST" %}
+        data-order="Ucranianos"
+    {% elif item.bando == "EAST" %}
+        data-order="Rusos"
+    {% else %}
+        -
+    {% endif %}>
+                    {% if item.comodin %}
+                        <img src="{% static 'img/star.png' %}" alt="Comodín" class="bando-icon" title="Comodín">
+                    {% elif item.bando == "WEST" %}
+                        <img src="{% static 'img/ua.png' %}" alt="Ucrania" class="bando-icon" title="Ucrania">
+                    {% elif item.bando == "EAST" %}
+                        <img src="{% static 'img/ru.png' %}" alt="Rusia" class="bando-icon" title="Rusia">
+                    {% else %}
+                    {% endif %}
+                </td>
+                <td><a href="{% url 'detalle_jugador' item.jugador.id %}">{{ item.jugador.nickname }}</a></td>
+                <td>{{ item.participaciones }}</td>
+                <td>{{ item.kills }}</td>
+                <td>{{ item.muertes }}</td>
+                <td>{{ item.kdratio|floatformat:2 }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No hay jugadores registrados.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock contenido %}

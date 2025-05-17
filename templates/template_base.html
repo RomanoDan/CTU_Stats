@@ -1,7 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+    
     {%load static%}
     <head>
+        
+<style>
+        .tabla-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto;
+            font-size: 0.95rem;
+        }
+        th, td {
+            border: 1px solid #ccc !important;
+            padding: 8px;
+        }
+        th {
+            background-color: #eee;
+        }
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -24,60 +56,79 @@
             <div id="layoutSidenav_nav">
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
-                        <div class="nav">
-                            <div class="sb-sidenav-menu-heading">Información</div>
-                            <a class="nav-link" href="{% url "info_general" %}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                General
-                            </a>
-                            <a class="nav-link" href="{% url "reglamento" %}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Reglamento
-                            </a>
-                        <div class="nav">
-                            <div class="sb-sidenav-menu-heading">Estadisticas</div>
-                            <a class="nav-link" href="{% url "lista_jugadores" %}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Jugadores
-                            </a>
-                            <!--
-                            <a class="nav-link" href="{% url "crear_participacion" %}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Agregar participación
-                            </a>
-                            [Carga manual deshabilitada]-->
-                            {% if request.user.is_staff %}
-                            <a class="nav-link" href="{% url "importar_json" %}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Importar partida
-                            </a>
-                            {% endif %}
-                            <div class="sb-sidenav-menu-heading">Usuario</div>
-                            {% if request.user.is_authenticated %}
-                                <a class="nav-link disabled">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
-                                    {{ request.user.username }}
-                                </a>
-                                <a class="nav-link" href="{% url 'logout' %}">
-                                    <form method="post" action="{% url 'logout' %}" style="display: inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" class="dropdown-item" style="background: none; border: none; padding: 0; margin: 0;">
-                                            Cerrar sesión
-                                        </button>
-                                    </form>
-                                </a>
-                            {% else %}
-                                <a class="nav-link" href="{% url 'login' %}">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-sign-in-alt"></i></div>
-                                    Ingresar
-                                </a>
-                                <a class="nav-link" href="{% url 'registro' %}">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-user-plus"></i></div>
-                                    Registrarse
-                                </a>
-                            {% endif %}
-                        </div>
-                    </div>
+                        <div class="sb-sidenav-menu">
+    <div class="nav">
+        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseChasivYar" aria-expanded="false" aria-controls="collapseChasivYar" id="chasivYarToggle">
+            <div class="sb-nav-link-icon"><i class="fa-solid fa-bars"></i></div>
+            Campaña Chasiv Yar
+            <div class="sb-sidenav-collapse-arrow"></div>
+        </a>
+        <div class="collapse" id="collapseChasivYar">
+            <nav class="sb-sidenav-menu-nested nav">
+                <div class="sb-sidenav-menu-heading">Información</div>
+                <a class="nav-link" href="{% url "info_general" %}">
+                    <div class="sb-nav-link-icon"><i class="fa-solid fa-circle-info"></i></div>
+                    General
+                </a>
+                <a class="nav-link" href="{% url "reglamento" %}">
+                    <div class="sb-nav-link-icon"><i class="fa-solid fa-book"></i></i></div>
+                    Reglamento
+                </a>
+                <div class="sb-sidenav-menu-heading">Estadisticas</div>
+                <a class="nav-link" href="{% url "lista_jugadores" %}">
+                    <div class="sb-nav-link-icon"><i class="fa-solid fa-users"></i></div>
+                    Jugadores
+                </a>
+            </nav>
+        </div>
+<div class="nav">
+        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseGeneral" aria-expanded="false" aria-controls="collapseGeneral" id="GeneralToggle">
+            <div class="sb-nav-link-icon"><i class="fa-solid fa-bars"></i></div>
+            Partidas Generales
+            <div class="sb-sidenav-collapse-arrow"></div>
+        </a>
+        <div class="collapse" id="collapseGeneral">
+            <nav class="sb-sidenav-menu-nested nav">
+                <div class="sb-sidenav-menu-heading">Estadisticas</div>
+                <a class="nav-link" href="{% url "lista_jugadores_general" %}">
+                    <div class="sb-nav-link-icon"><i class="fa-solid fa-users"></i></div>
+                    Jugadores
+                </a>
+            </nav>
+        </div>
+        <div class="sb-sidenav-menu-heading">Usuario</div>
+        {% if request.user.is_authenticated %}
+            <a class="nav-link disabled">
+                <div class="sb-nav-link-icon"><i class="fa-solid fa-user"></i></div>
+                {{ request.user.username }}
+            </a>
+            {% if request.user.is_staff %}
+                <a class="nav-link" href="{% url "importar_json" %}">
+                    <div class="sb-nav-link-icon"><i class="fa-solid fa-file"></i></div>
+                    Importar partida
+                </a>
+                {% endif %}
+            <a class="nav-link" href="{% url 'logout' %}">
+                <form method="post" action="{% url 'logout' %}" style="display: inline;">
+    {% csrf_token %}
+    <button type="submit" class="nav-link" style="background: none; border: none; padding: 0; margin: 0; width: 100%; text-align: left;">
+        <div class="sb-nav-link-icon"><i class="fa-solid fa-right-to-bracket"></i></div>
+        Cerrar sesión
+    </button>
+</form>
+            </a>
+        {% else %}
+            <a class="nav-link" href="{% url 'login' %}">
+                <div class="sb-nav-link-icon"><i class="fas fa-sign-in-alt"></i></div>
+                Ingresar
+            </a>
+            <a class="nav-link" href="{% url 'registro' %}">
+                <div class="sb-nav-link-icon"><i class="fas fa-user-plus"></i></div>
+                Registrarse
+            </a>
+        {% endif %}
+    </div>
+</div>
                     
                 </nav>
             </div>
@@ -94,9 +145,9 @@
                         <div class="d-flex align-items-center justify-content-between small">
                             <div class="text-muted">Copyright &copy; Comunidad Táctica Unida</div>
                             <div>
-                                <a href="https://www.instagram.com/ctuarma3/" target="_blank">Instagram</a>
+                                <a href="https://www.instagram.com/ctuarma3/" target="_blank"><i class="fa-brands fa-square-instagram"></i>Instagram</a>
                                 &middot;
-                                <a href="https://discord.gg/j2Xfu2pbDA" target="_blank">Discord</a>
+                                <a href="https://discord.gg/j2Xfu2pbDA" target="_blank"><i class="fa-brands fa-discord"></i>Discord</a>
                             </div>
                         </div>
                     </div>
@@ -110,22 +161,73 @@
         <script src="assets/demo/chart-bar-demo.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
         <script src="js/datatables-simple-demo.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.js"></script>
+<script>
+    const tabla = document.getElementById('tabla-general');
+if (tabla) {
+    new simpleDatatables.DataTable(tabla, {
+        labels: {
+            placeholder: "Buscar...",
+            perPage: " filas por página",
+            noRows: "No hay datos para mostrar",
+            info: "Mostrando {start} a {end} de {rows} filas"
+        }
+    });
+}
+</script>
     </body>
     <script>
-        window.addEventListener('DOMContentLoaded', event => {
-            const sidebarToggle = document.body.querySelector('#sidebarToggle');
-            if (sidebarToggle) {
-                sidebarToggle.addEventListener('click', event => {
-                    event.preventDefault();
-                    document.body.classList.toggle('sb-sidenav-toggled');
-                    localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('sb-sidenav-toggled'));
-                });
-            }
-    
-            // Restaurar el estado del toggle desde localStorage
-            if (localStorage.getItem('sb|sidebar-toggle') === 'true') {
+    window.addEventListener('DOMContentLoaded', event => {
+        const sidebarToggle = document.body.querySelector('#sidebarToggle');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', event => {
+                event.preventDefault();
                 document.body.classList.toggle('sb-sidenav-toggled');
+                localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('sb-sidenav-toggled'));
+            });
+        }
+        if (localStorage.getItem('sb|sidebar-toggle') === 'true') {
+            document.body.classList.toggle('sb-sidenav-toggled');
+        }
+
+        // Campaña Chasiv Yar collapse cache
+        const chasivYarToggle = document.getElementById('chasivYarToggle');
+        const chasivYarCollapse = document.getElementById('collapseChasivYar');
+        if (chasivYarToggle && chasivYarCollapse) {
+            // Restaurar estado
+            if (localStorage.getItem('chasivYar-collapse') === 'show') {
+                chasivYarCollapse.classList.add('show');
+                chasivYarToggle.setAttribute('aria-expanded', 'true');
             }
-        });
-    </script>
+            // Guardar estado al hacer click
+            chasivYarToggle.addEventListener('click', function() {
+                setTimeout(function() {
+                    if (chasivYarCollapse.classList.contains('show')) {
+                        localStorage.setItem('chasivYar-collapse', 'show');
+                    } else {
+                        localStorage.setItem('chasivYar-collapse', 'hide');
+                    }
+                }, 350); 
+            });
+        }
+        const generalToggle = document.getElementById('GeneralToggle');
+        const generalCollapse = document.getElementById('collapseGeneral');
+        if (generalToggle && generalCollapse) {
+            if (localStorage.getItem('general-collapse') === 'show') {
+                generalCollapse.classList.add('show');
+                generalToggle.setAttribute('aria-expanded', 'true');
+            }
+            
+            generalToggle.addEventListener('click', function() {
+                setTimeout(function() {
+                    if (chasivYarCollapse.classList.contains('show')) {
+                        localStorage.setItem('general-collapse', 'show');
+                    } else {
+                        localStorage.setItem('general-collapse', 'hide');
+                    }
+                }, 350); 
+            });
+        }
+    });
+</script>
 </html>

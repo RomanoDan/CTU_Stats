@@ -1,6 +1,6 @@
 {% extends "template_base.html" %}
 {% block titulo %}
-<h2>Campaña Chasiv Yar - Datos del jugador: {{ jugador.nickname }}</h2>
+<h2>General - Datos del jugador: {{ jugador.nickname }}</h2>
 {% endblock titulo %}
 {% block contenido %}
 
@@ -105,7 +105,7 @@
             {% for victima in victimas %}
             <tr>
                 <td>
-                    <a href="{% url 'detalle_jugador' victima.jugador.id %}">
+                    <a href="{% url 'detalle_jugador_general' victima.jugador.id %}">
                         {{ victima.jugador.nickname }}
                     </a>
                     {% if victima.teamkill %}
@@ -132,7 +132,7 @@
             {% for asesino in asesinos %}
             <tr>
     <td>
-        <a href="{% url 'detalle_jugador' asesino.jugador.id %}">{{ asesino.jugador.nickname }}</a>
+        <a href="{% url 'detalle_jugador_general' asesino.jugador.id %}">{{ asesino.jugador.nickname }}</a>
         {% if asesino.teamkill %}
         <span style="color: red;">(TK)</span>
         {% endif %}
