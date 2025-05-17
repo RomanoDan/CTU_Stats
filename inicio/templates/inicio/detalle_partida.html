@@ -56,14 +56,26 @@
         <tr><td>Comandante Rusia</td><td>{{ partida.comandante_west }}</td></tr>
         <tr><td>Comandante Ucrania</td><td>{{ partida.comandante_east }}</td></tr>
         <tr><td>Ganador</td><td>
+        {% if partida.tipo == "CHASIV" %}
             {% if partida.ganador == "WEST" %}
-        <span style="color: red;">Rusia</span>
-        {% elif partida.ganador == "EAST" %}
-        <span style="color: blue;">Ucrania</span>
-        {% elif partida.ganador == "IND" %}
-        <span style="color: gray;">Independiente</span>
-        {% else %}
-        No definido
+                <span style="color: blue;">Ucrania</span>
+            {% elif partida.ganador == "EAST" %}
+                <span style="color: red;">Rusia</span>
+            {% elif partida.ganador == "IND" %}
+                <span style="color: gray;">Independiente</span>
+            {% else %}
+            No definido
+            {% endif %}
+        {% elif partida.tipo == "GENERAL" %}
+            {% if partida.ganador == "WEST" %}
+            <span style="color: blue;">{{partida.ganador}}</span>
+            {% elif partida.ganador == "EAST" %}
+            <span style="color: red;">{{partida.ganador}}</span>
+            {% elif partida.ganador == "IND" %}
+            <span style="color: green;">{{partida.ganador}}</span>
+            {% else %}
+            No definido
+            {% endif %}
         {% endif %}
         <tr>
             <td>MVP</td>

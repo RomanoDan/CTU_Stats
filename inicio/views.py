@@ -417,7 +417,7 @@ def importar_participacion_json(request):
             victim_part.save()
 
         messages.success(request, 'Partida y participaciones importadas correctamente.')
-        return redirect('lista_jugadores')
+        return redirect('inicio')
 
     return render(request, 'inicio/importar_json.html')
 
