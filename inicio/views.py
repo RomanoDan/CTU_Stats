@@ -60,9 +60,9 @@ def detalle_jugador(request, jugador_id):
     participaciones = participaciones_qs.count()
     kills = participaciones_qs.aggregate(total=Count('kills'))['total'] or 0
     muertes = participaciones_qs.filter(murio=True).count()
-    teamkills = participaciones_qs.aggregate(total=Count('cantidad_teamkills'))['total'] or 0
-    disparos = participaciones_qs.aggregate(total=Count('cantidad_disparos'))['total'] or 0
-    hits = participaciones_qs.aggregate(total=Count('cantidad_hits'))['total'] or 0
+    teamkills = participaciones_qs.aggregate(total=Sum('cantidad_teamkills'))['total'] or 0
+    disparos = participaciones_qs.aggregate(total=Sum('cantidad_disparos'))['total'] or 0
+    hits = participaciones_qs.aggregate(total=Sum('cantidad_hits'))['total'] or 0
 
     kdratio = kills / muertes if muertes > 0 else kills
     aliveness = 100 * (participaciones - muertes) / participaciones if participaciones > 0 else 0
@@ -204,9 +204,9 @@ def detalle_jugador_general(request, jugador_id):
     participaciones = participaciones_qs.count()
     kills = participaciones_qs.aggregate(total=Count('kills'))['total'] or 0
     muertes = participaciones_qs.filter(murio=True).count()
-    teamkills = participaciones_qs.aggregate(total=Count('cantidad_teamkills'))['total'] or 0
-    disparos = participaciones_qs.aggregate(total=Count('cantidad_disparos'))['total'] or 0
-    hits = participaciones_qs.aggregate(total=Count('cantidad_hits'))['total'] or 0
+    teamkills = participaciones_qs.aggregate(total=Sum('cantidad_teamkills'))['total'] or 0
+    disparos = participaciones_qs.aggregate(total=Sum('cantidad_disparos'))['total'] or 0
+    hits = participaciones_qs.aggregate(total=Sum('cantidad_hits'))['total'] or 0
 
     kdratio = kills / muertes if muertes > 0 else kills
     aliveness = 100 * (participaciones - muertes) / participaciones if participaciones > 0 else 0
