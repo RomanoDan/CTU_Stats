@@ -324,6 +324,7 @@ def importar_participacion_json(request):
         nombre_partida = request.POST.get('nombre_partida', 'Partida sin nombre')
         comandante_west_nickname = request.POST.get('comandante_west', None)
         comandante_east_nickname = request.POST.get('comandante_east', None)
+        comandante_ind_nickname = request.POST.get('comandante_ind', None)
         bando_ganador = request.POST.get('bando_ganador', None)
         tipo = request.POST.get('tipo', 'INTERNA')
 
@@ -373,8 +374,13 @@ def importar_participacion_json(request):
         if comandante_east_nickname:
             comandante_east = Jugador.objects.filter(nickname=comandante_east_nickname).first()
         
+        comandante_ind = None
+        if comandante_ind_nickname:
+            comandante_ind = Jugador.objects.filter(nickname=comandante_ind_nickname).first()
+        
         partida.comandante_west = comandante_west
         partida.comandante_east = comandante_east
+        partida.comandante_ind = comandante_ind
         partida.save()
 
         # Procesar kills
@@ -452,3 +458,36 @@ def detalle_partida(request, partida_id):
         'mvps': mvps,
     }
     return render(request, 'inicio/detalle_partida.html', contexto)
+
+def detalle_partida_general(request, partida_id):
+    partida = get_object_or_404(Partida, id=partida_id)
+    participaciones = partida.participaciones.all()
+
+    # Separar participaciones por bando usando el campo bando de Participacion
+    participaciones_east = participaciones.filter(bando='EAST', jugador__comodin=False)
+    participaciones_west = participaciones.filter(bando='WEST', jugador__comodin=False)
+    participaciones_ind = participaciones.filter(bando='IND', jugador__comodin=False)
+    participaciones_comodines = participaciones.filter(jugador__comodin=True)
+
+    # Calcular MVP 
+    mvp_candidates = participaciones.order_by('-cantidad_kills')
+    if mvp_candidates.exists():
+        max_kills = mvp_candidates.first().cantidad_kills
+        mvp_candidates = mvp_candidates.filter(cantidad_kills=max_kills)
+        min_teamkills = min(p.cantidad_teamkills for p in mvp_candidates)
+        mvp_candidates = [p for p in mvp_candidates if p.cantidad_teamkills == min_teamkills]
+        if len(mvp_candidates) > 1:
+            vivos = [p for p in mvp_candidates if not p.murio]
+            if vivos:
+                mvp_candidates = vivos
+    mvps = mvp_candidates
+
+    contexto = {
+        'partida': partida,
+        'participaciones_east': participaciones_east,
+        'participaciones_west': participaciones_west,
+        'participaciones_comodines': participaciones_comodines,
+        'participaciones_ind': participaciones_ind,
+        'mvps': mvps,
+    }
+    return render(request, 'inicio/detalle_partida_general.html', contexto)

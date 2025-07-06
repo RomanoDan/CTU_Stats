@@ -50,6 +50,9 @@ class Partida(models.Model):
     comandante_east = models.ForeignKey(
         Jugador, on_delete=models.SET_NULL, null=True, blank=True, related_name='partidas_comandante_east'
     )
+    comandante_ind = models.ForeignKey(
+        Jugador, on_delete=models.SET_NULL, null=True, blank=True, related_name='partidas_comandante_ind'
+    )
     ganador = models.CharField(max_length=10, null=True, blank=True)
     tipo = models.CharField(max_length=30, default="INTERNA")
 
@@ -88,7 +91,7 @@ class Participacion(models.Model):
         jugador_obj.save()
 
     def __str__(self):
-        return f"{self.nickname} - Participación"
+        return f"{self.nickname} - {self.partida.nombre}"
 
     
 

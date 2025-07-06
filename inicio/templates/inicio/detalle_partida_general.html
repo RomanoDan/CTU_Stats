@@ -53,13 +53,18 @@
         <tr><th colspan="2">Detalles de la Partida</th></tr>
         <tr><td>Nombre</td><td>{{ partida.nombre }}</td></tr>
         <tr><td>Fecha</td><td>{{ partida.fecha|date:"d/m/Y H:i" }}</td></tr>
-        <tr><td>Comandante ucraniano</td><td>{% if partida.comandante_west %}
+        <tr><td>Comandante bando West</td><td>{% if partida.comandante_west %}
             {{ partida.comandante_west.nickname }}
         {% else %}
             No aplica
         {% endif %}</td></tr>
-        <tr><td>Comandante ruso</td><td>{% if partida.comandante_east %}
+        <tr><td>Comandante bando East</td><td>{% if partida.comandante_east %}
             {{ partida.comandante_east.nickname }}
+        {% else %}
+            No aplica
+        {% endif %}</td></tr>
+        <tr><td>Comandante bando Independiente</td><td>{% if partida.comandante_ind %}
+            {{ partida.comandante_ind.nickname }}
         {% else %}
             No aplica
         {% endif %}</td></tr>
@@ -90,7 +95,7 @@
             <td>
                 {% if mvps %}
                     {% for mvp in mvps %}
-                        <a href="{% url 'detalle_jugador' mvp.jugador.id %}">
+                        <a href="{% url 'detalle_jugador_general' mvp.jugador.id %}">
                             {{ mvp.jugador.nickname }}
                         </a>{% if not forloop.last %}, {% endif %}
                     {% endfor %}
@@ -104,10 +109,9 @@
 
 <!-- Participaciones separadas por bando -->
 <div class="detalle-container">
-    <!-- Participaciones Rusia -->
     <div class="tabla-detalle">
         <table>
-            <tr><th colspan="4">Rusos</th></tr>
+            <tr><th colspan="4">East side</th></tr>
             <tr>
                 <th>Jugador</th>
                 <th>Kills</th>
@@ -117,7 +121,7 @@
             {% for participacion in participaciones_east %}
             <tr>
                 <td>
-                    <a href="{% url 'detalle_jugador' participacion.jugador.id %}">
+                    <a href="{% url 'detalle_jugador_general' participacion.jugador.id %}">
                         {{ participacion.jugador.nickname }}
                     </a>
                 </td>
@@ -126,15 +130,14 @@
                 <td>{{ participacion.cantidad_teamkills }}</td>
             </tr>
             {% empty %}
-            <tr><td colspan="4">No hay participaciones registradas para Rusia.</td></tr>
+            <tr><td colspan="4">No hay participaciones registradas para el bando east.</td></tr>
             {% endfor %}
         </table>
     </div>
 
-    <!-- Participaciones Ucrania -->
     <div class="tabla-detalle">
         <table>
-            <tr><th colspan="4">Ucranianos</th></tr>
+            <tr><th colspan="4">West side</th></tr>
             <tr>
                 <th>Jugador</th>
                 <th>Kills</th>
@@ -144,7 +147,7 @@
             {% for participacion in participaciones_west %}
             <tr>
                 <td>
-                    <a href="{% url 'detalle_jugador' participacion.jugador.id %}">
+                    <a href="{% url 'detalle_jugador_general' participacion.jugador.id %}">
                         {{ participacion.jugador.nickname }}
                     </a>
                 </td>
@@ -153,24 +156,24 @@
                 <td>{{ participacion.cantidad_teamkills }}</td>
             </tr>
             {% empty %}
-            <tr><td colspan="4">No hay participaciones registradas para Ucrania.</td></tr>
+            <tr><td colspan="4">No hay participaciones registradas para el bando west.</td></tr>
             {% endfor %}
         </table>
     </div>
-    <!-- Participaciones Comodines -->
+
 <div class="tabla-detalle">
     <table>
-        <tr><th colspan="4">Comodines</th></tr>
+        <tr><th colspan="4">Ind side</th></tr>
         <tr>
             <th>Jugador</th>
             <th>Kills</th>
             <th>Muerto</th>
             <th>Teamkills</th>
         </tr>
-        {% for participacion in participaciones_comodines %}
+        {% for participacion in participaciones_ind %}
         <tr>
             <td>
-                <a href="{% url 'detalle_jugador' participacion.jugador.id %}">
+                <a href="{% url 'detalle_jugador_general' participacion.jugador.id %}">
                     {{ participacion.jugador.nickname }}
                 </a>
             </td>
@@ -179,7 +182,7 @@
             <td>{{ participacion.cantidad_teamkills }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="4">No hay participaciones registradas para comodines.</td></tr>
+        <tr><td colspan="4">No hay participaciones registradas para el bando ind.</td></tr>
         {% endfor %}
     </table>
 </div>
